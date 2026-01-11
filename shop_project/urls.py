@@ -1,22 +1,35 @@
-"""
-URL configuration for shop_project project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+# shop_project/urls.py
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from core import views  # Import views from your core app
 
 urlpatterns = [
+    # 1. Admin Panel
     path('admin/', admin.site.urls),
+    
+    # 2. Traffic Controller (Redirects after login)
+    path('login-redirect/', views.login_redirect_view, name='login_redirect'),
+    
+    # 3. Authentication (Login, Logout, Password Reset)
+    path('accounts/', include('django.contrib.auth.urls')),
+    
+   
+    path('inventory/', views.inventory_view, name='inventory'),
+    path('daily-sales/', views.daily_sales_view, name='daily_sales'),
+    path('profit-loss/', views.profit_loss_view, name='profit_loss'),
+    path('expenses/', views.expenses_view, name='expenses'),
+    path('reports/', views.reports_view, name='reports'),
+    path('customers/', views.customers_view, name='customers'),
+    path('staff/', views.staff_view, name='staff'),
+    path('suppliers/', views.suppliers_view, name='suppliers'),
+    path('invoice/', views.invoice_view, name='invoice'),
+
+   
+    path('', include('core.urls')), 
 ]
+
+# This allows images to be displayed in development mode
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+{% load currency_filters %}  {% block title %} Profit & Loss Report {% endblock %}
+{% block page_name %} Profit & Loss Report {% endblock %}
+
+{% block content %}
+<style>
+    .card-stat { border: none; color: white; border-radius: 10px; }
+    .bg-revenue { background: #1abc9c; } 
+    .bg-expense { background: #e74c3c; } 
+    .bg-gross   { background: #3498db; } 
+    .bg-net     { background: #00bcd4; } 
+</style>
+
+<div class="container-fluid">
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card card-stat bg-revenue p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0 fw-bold">₹{{ total_revenue|rupees }}</h3>
+                        <small class="opacity-75">Total Revenue</small>
+                    </div>
+                    <i class="fa-solid fa-cash-register fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-stat bg-expense p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0 fw-bold">₹{{ total_expenses|rupees }}</h3>
+                        <small class="opacity-75">Operating Expenses</small>
+                    </div>
+                    <i class="fa-solid fa-file-invoice-dollar fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-stat bg-gross p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0 fw-bold">₹{{ gross_profit|rupees }}</h3>
+                        <small class="opacity-75">Gross Profit</small>
+                    </div>
+                    <i class="fa-solid fa-coins fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-stat bg-net p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0 fw-bold">₹{{ net_profit|rupees }}</h3>
+                        <small class="opacity-75">Net Profit ({{ profit_margin|floatformat:1 }}% Margin)</small>
+                    </div>
+                    <i class="fa-solid fa-wallet fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title fw-bold text-muted mb-4">Monthly Performance ({{ current_year }})</h5>
+            <div style="height: 350px;">
+                <canvas id="plChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h6 class="mb-0 fw-bold">Monthly Breakdown</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Period</th>
+                        <th>Revenue</th>
+                        <th>Cost of Goods</th>
+                        <th>Gross Profit</th>
+                        <th>Op. Expenses</th>
+                        <th class="fw-bold text-end pe-4">Net Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in monthly_report %}
+                    <tr>
+                        <td class="ps-4 fw-bold">{{ row.month }} {{ current_year }}</td>
+                        
+                        <td>₹{{ row.revenue|rupees }}</td>
+                        <td class="text-secondary">₹{{ row.cogs|rupees }}</td>
+                        <td class="text-primary fw-bold">₹{{ row.gross_profit|rupees }}</td>
+                        <td class="text-danger">₹{{ row.expenses|rupees }}</td>
+                        <td class="text-end pe-4 fw-bold {% if row.net_profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ₹{{ row.net_profit|rupees }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No data available for this year yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('plChart').getContext('2d');
+    
+    const labels = [{% for row in monthly_report %}"{{ row.month }}",{% endfor %}];
+    const revenueData = [{% for row in monthly_report %}{{ row.revenue }},{% endfor %}];
+    const expenseData = [{% for row in monthly_report %}{{ row.expenses }},{% endfor %}];
+    const profitData = [{% for row in monthly_report %}{{ row.net_profit }},{% endfor %}];
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Revenue', data: revenueData, backgroundColor: '#1abc9c', borderRadius: 4 },
+                { label: 'Expenses', data: expenseData, backgroundColor: '#e74c3c', borderRadius: 4 },
+                { label: 'Net Profit', data: profitData, backgroundColor: '#3498db', borderRadius: 4 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { borderDash: [2, 2] } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+{% endblock %}

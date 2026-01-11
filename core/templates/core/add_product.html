@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Manage Product {% endblock %}
+{% block page_name %} Product Management {% endblock %}
+
+{% block content %}
+<style>
+    .form-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    .btn-custom {
+        background: #764ba2; /* Matches your Purple Sidebar */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        width: 100%;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-custom:hover {
+        background: #667eea;
+        color: white;
+    }
+    .form-label { font-weight: 500; color: #555; }
+</style>
+
+<div class="container">
+    <div class="form-card">
+        <h3 class="text-center mb-4 text-primary fw-bold">
+            {% if form.instance.pk %}
+                <i class="fa-solid fa-pen-to-square"></i> Edit Product
+            {% else %}
+                <i class="fa-solid fa-plus"></i> Add New Product
+            {% endif %}
+        </h3>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label">Cost Price (Buying Price)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light text-muted">₹</span>
+                    <input type="number" step="0.01" name="cost_price" class="form-control" 
+                           placeholder="0.00" required
+                           value="{{ form.instance.cost_price|default:'' }}">
+                </div>
+                <small class="text-muted">Required for Profit & Loss calculation.</small>
+            </div>
+
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                <div class="input-group">
+                    {{ field }} 
+                </div>
+                {% if field.help_text %}
+                    <small class="text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="d-flex gap-2 mt-4">
+                <a href="{% url 'inventory' %}" class="btn btn-outline-secondary w-50">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-custom w-50">
+                    {% if form.instance.pk %}Update{% else %}Save Product{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(function(input) {
+        if (!input.classList.contains('form-control')) {
+            input.classList.add('form-control');
+        }
+    });
+</script>
+{% endblock %}

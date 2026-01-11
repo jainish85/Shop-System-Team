@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Coming Soon {% endblock %}
+{% block page_name %} Page Under Construction {% endblock %}
+
+{% block content %}
+    <div class="card p-5 text-center shadow-sm border-0" style="margin-top: 50px;">
+        <div class="mb-4">
+            <i class="fa-solid fa-person-digging fa-5x text-warning"></i>
+        </div>
+        <h2 class="text-primary fw-bold">Work in Progress 🚧</h2>
+        <p class="text-muted fs-5">This feature is being built right now.</p>
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary px-4 rounded-pill">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+{% endblock %}

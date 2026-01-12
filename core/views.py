@@ -7,8 +7,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from .models import Product, Category, Sale, Expense
-from .forms import ProductForm, CategoryForm, SaleForm, ExpenseForm
+from .models import Product, Category, Sale, Expense ,Customer
+from .forms import ProductForm, CategoryForm, SaleForm, ExpenseForm ,CustomerForm
 
 # --- TRAFFIC CONTROLLER ---
 def login_redirect_view(request):
@@ -107,6 +107,7 @@ def edit_product(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'core/add_product.html', {'form': form})
 
+
 # --- DELETE PRODUCT ---
 @login_required
 def delete_product(request, pk):
@@ -116,6 +117,7 @@ def delete_product(request, pk):
     product.delete()
     messages.success(request, "Product deleted.")
     return redirect('inventory')
+
 
 # --- CATEGORY MANAGEMENT ---
 @login_required
@@ -129,6 +131,7 @@ def add_category(request):
         form = CategoryForm()
     return render(request, 'core/add_category.html', {'form': form})
 
+
 @login_required
 def manage_categories(request):
     categories = Category.objects.all()
@@ -141,11 +144,13 @@ def manage_categories(request):
         form = CategoryForm()
     return render(request, 'core/manage_categories.html', {'categories': categories, 'form': form})
 
+
 @login_required
 def delete_category(request, pk):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     return redirect('manage_categories')
+
 
 # --- SELL PRODUCT ---
 @login_required
@@ -173,6 +178,7 @@ def sell_product(request, pk):
         form = SaleForm()
     return render(request, 'core/sell_product.html', {'product': product, 'form': form})
 
+
 # --- INVENTORY VIEW ---
 @login_required
 def inventory_view(request):
@@ -182,6 +188,8 @@ def inventory_view(request):
     else:
         products = Product.objects.all()
     return render(request, 'core/inventory.html', {'products': products})
+
+
 
 # --- PROFIT & LOSS VIEW ---
 @login_required
@@ -233,6 +241,8 @@ def profit_loss_view(request):
     }
     return render(request, 'core/profit_loss.html', context)
 
+
+
 # --- EXPENSES VIEW ---
 @login_required
 def expenses_view(request):
@@ -271,8 +281,22 @@ def profile(request):
 
 @login_required
 def reports_view(request): return render(request, 'core/reports.html')
+
+
 @login_required
-def customers_view(request): return render(request, 'core/customers.html')
+def customers_view(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Customer added successfully!")
+            return redirect('customers')
+    else:
+        form = CustomerForm()
+    
+    customers = Customer.objects.all().order_by('-date_added')
+    return render(request, 'core/customers.html', {'form': form, 'customers': customers})
+
 @login_required
 def staff_view(request): return render(request, 'core/staff.html')
 @login_required

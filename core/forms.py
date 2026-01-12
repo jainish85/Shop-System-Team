@@ -1,6 +1,6 @@
 from django import forms
 from .models import Product, Category, Sale,Expense
-
+from .models import Customer 
 # 1. Category Form
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -43,3 +43,10 @@ class ExpenseForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Shop Rent'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
         }
+
+# 5. Customer form
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name', 'phone', 'email', 'address']

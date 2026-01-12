@@ -1,19 +1,48 @@
 {% extends 'core/base.html' %}
-
-{% block title %} Coming Soon {% endblock %}
-{% block page_name %} Page Under Construction {% endblock %}
+{% block title %}Customers{% endblock %}
+{% block page_name %}Customer Management{% endblock %}
 
 {% block content %}
-    <div class="card p-5 text-center shadow-sm border-0" style="margin-top: 50px;">
-        <div class="mb-4">
-            <i class="fa-solid fa-person-digging fa-5x text-warning"></i>
-        </div>
-        <h2 class="text-primary fw-bold">Work in Progress 🚧</h2>
-        <p class="text-muted fs-5">This feature is being built right now.</p>
-        <div class="mt-4">
-            <a href="{% url 'home' %}" class="btn btn-outline-primary px-4 rounded-pill">
-                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-            </a>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">Add New Customer</div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success w-100">Save Customer</button>
+                </form>
+            </div>
         </div>
     </div>
+
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-white font-weight-bold">Customer List</div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in customers %}
+                        <tr>
+                            <td>{{ c.name }}</td>
+                            <td>{{ c.phone }}</td>
+                            <td>{{ c.address }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">No customers found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

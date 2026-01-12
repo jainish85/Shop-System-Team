@@ -1,19 +1,60 @@
 {% extends 'core/base.html' %}
-
-{% block title %} Coming Soon {% endblock %}
-{% block page_name %} Page Under Construction {% endblock %}
+{% block title %}Staff Management{% endblock %}
+{% block page_name %}Staff & Payroll{% endblock %}
 
 {% block content %}
-    <div class="card p-5 text-center shadow-sm border-0" style="margin-top: 50px;">
-        <div class="mb-4">
-            <i class="fa-solid fa-person-digging fa-5x text-warning"></i>
-        </div>
-        <h2 class="text-primary fw-bold">Work in Progress 🚧</h2>
-        <p class="text-muted fs-5">This feature is being built right now.</p>
-        <div class="mt-4">
-            <a href="{% url 'home' %}" class="btn btn-outline-primary px-4 rounded-pill">
-                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-            </a>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-header bg-dark text-white">
+                <i class="fa-solid fa-user-plus"></i> Hire New Staff
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Add Employee</button>
+                </form>
+            </div>
         </div>
     </div>
+
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-white">
+                <h5 class="m-0 text-primary">Employee List</h5>
+            </div>
+            <div class="card-body">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Salary</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in staff_list %}
+                        <tr>
+                            <td class="fw-bold">{{ emp.first_name }} {{ emp.last_name }}</td>
+                            <td><span class="badge bg-info text-dark">{{ emp.position }}</span></td>
+                            <td>{{ emp.phone }}</td>
+                            <td class="text-success fw-bold">${{ emp.salary }}</td>
+                            <td>{{ emp.date_hired|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No employees found. Add one on the left!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

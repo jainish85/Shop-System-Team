@@ -34,6 +34,9 @@
             <a href="{% url 'reports' %}" class="nav-link"><i class="fa-solid fa-file-waveform"></i> Reports & AI</a>
             <a href="{% url 'customers' %}" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a>
             
+            <a href="{% url 'staff' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Staff</a>
+            <a href="{% url 'suppliers' %}" class="nav-link"><i class="fa-solid fa-truck"></i> Suppliers</a>
+            
             <div class="mt-5">
                 <form action="{% url 'logout' %}" method="post" class="px-3">
                     {% csrf_token %}

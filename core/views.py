@@ -7,8 +7,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from .models import Product, Category, Sale, Expense ,Customer
-from .forms import ProductForm, CategoryForm, SaleForm, ExpenseForm ,CustomerForm
+from .models import Product, Category, Sale, Expense ,Customer ,Staff ,Supplier
+from .forms import ProductForm, CategoryForm, SaleForm, ExpenseForm ,CustomerForm ,StaffForm ,SupplierForm
 
 # --- TRAFFIC CONTROLLER ---
 def login_redirect_view(request):
@@ -298,8 +298,36 @@ def customers_view(request):
     return render(request, 'core/customers.html', {'form': form, 'customers': customers})
 
 @login_required
-def staff_view(request): return render(request, 'core/staff.html')
+def staff_view(request):
+    if request.method == 'POST':
+        form = StaffForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "New staff member hired!")
+            return redirect('staff')
+    else:
+        form = StaffForm()
+    
+    # Get all staff
+    staff_list = Staff.objects.all()
+    
+    return render(request, 'core/staff.html', {'form': form, 'staff_list': staff_list})
+
 @login_required
-def suppliers_view(request): return render(request, 'core/suppliers.html')
+def suppliers_view(request):
+    if request.method == 'POST':
+        form = SupplierForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Supplier added successfully!")
+            return redirect('suppliers')
+    else:
+        form = SupplierForm()
+    
+    suppliers = Supplier.objects.all().order_by('-date_added')
+    return render(request, 'core/suppliers.html', {'form': form, 'suppliers': suppliers})
+
+
+
 @login_required
 def invoice_view(request): return render(request, 'core/invoice.html')

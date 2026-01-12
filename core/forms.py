@@ -1,6 +1,7 @@
 from django import forms
-from .models import Product, Category, Sale,Expense
-from .models import Customer 
+from .models import Product, Category, Sale,Expense , Customer ,Staff ,Supplier
+
+
 # 1. Category Form
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -45,8 +46,34 @@ class ExpenseForm(forms.ModelForm):
         }
 
 # 5. Customer form
+# In core/forms.py
 
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
         fields = ['name', 'phone', 'email', 'address']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Full Name'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Phone Number'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'name@example.com'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter Address'}), # 'rows': 3 makes it smaller
+        }
+
+# 6. staff salary 
+class StaffForm(forms.ModelForm):
+    class Meta:
+        model = Staff
+        fields = ['first_name', 'last_name', 'position', 'phone', 'salary']
+
+#7. supplier
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ['company_name', 'contact_person', 'phone', 'email', 'address']
+        widgets = {
+            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
+            'contact_person': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contact Person'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email (Optional)'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Address'}),
+        }
